@@ -40,6 +40,10 @@ public class ExampleSubsystem extends SubsystemBase {
     leftFollower = new TalonFX(1);
     rightMaster = new TalonFX(15);
     rightFollower = new TalonFX(14);
+    TalonFX[] motors = { leftMaster, leftFollower, rightMaster, rightFollower };
+    for (TalonFX motor : motors) {
+      motor.configFactoryDefault();
+    }
 
     if (SmartDashboard.getBoolean("published", false) == false) {
       putToSmartDashboard();
