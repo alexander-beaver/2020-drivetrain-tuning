@@ -24,12 +24,12 @@ public class ExampleSubsystem extends SubsystemBase {
    * Puts default values to SmartDashboard
    */
   public void putToSmartDashboard() {
-    TalonFX[] motors = { leftMaster, leftFollower, rightMaster, rightFollower };
+    TalonFX[] motors = { leftMaster, rightMaster };
     for (TalonFX motor : motors) {
       String baseName = "Motor " + motor.getDeviceID() + " ";
       SmartDashboard.putBoolean(baseName + "inverted", false);
     }
-    
+
     SmartDashboard.putBoolean("Flush", false);
     SmartDashboard.putNumber("kP", 0);
     SmartDashboard.putNumber("kI", 0);
@@ -46,10 +46,13 @@ public class ExampleSubsystem extends SubsystemBase {
     leftFollower = new TalonFX(1);
     rightMaster = new TalonFX(15);
     rightFollower = new TalonFX(14);
-    TalonFX[] motors = { leftMaster, leftFollower, rightMaster, rightFollower };
+    TalonFX[] motors = { leftMaster, rightMaster };
     for (TalonFX motor : motors) {
       motor.configFactoryDefault();
     }
+
+    rightMaster.setInverted(true);
+    rightFollower.setInverted(true);
 
     if (SmartDashboard.getBoolean("published", false) == false) {
       putToSmartDashboard();
@@ -71,7 +74,6 @@ public class ExampleSubsystem extends SubsystemBase {
       motor.config_kD(0, SmartDashboard.getNumber("kD", 0));
       motor.config_kF(0, SmartDashboard.getNumber("kF", 0));
       motor.set(ControlMode.Velocity, SmartDashboard.getNumber("Setpoint", 0));
-      motor.setInverted(SmartDashboard.getBoolean(baseName+"inverted", false));
 
     }
     SmartDashboard.putBoolean("Flush", false);
@@ -81,7 +83,7 @@ public class ExampleSubsystem extends SubsystemBase {
    * Puts the feedback values to Smart Dashboard
    */
   public void putMotorValuesToSmartDashboard() {
-    TalonFX[] motors = { leftMaster, leftFollower, rightMaster, rightFollower };
+    TalonFX[] motors = { leftMaster, leftFollower, rightMaster, rightFollower};
     for (TalonFX motor : motors) {
       String baseName = "Motor " + motor.getDeviceID() + " ";
       SmartDashboard.putNumber(baseName + "target", motor.getClosedLoopTarget());
@@ -96,5 +98,11 @@ public class ExampleSubsystem extends SubsystemBase {
     if (SmartDashboard.getBoolean("Flush", false)) {
       flush();
     }
+    TalonFX[] motors = {leftMaster, leftFollower, rightMaster, rightFollower};
+    for (TalonFX motor : motors){
+      motor.set(ControlMode.PercentOutput, 0.5);
+      SmartDashboard.putNumber("Motor "+motor.getDeviceID() + "Sensor Velocity", motor.getSelectedSensorVelocity());
+    }
+
   }
 }
