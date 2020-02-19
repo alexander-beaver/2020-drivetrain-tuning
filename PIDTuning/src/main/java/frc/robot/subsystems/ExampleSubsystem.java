@@ -24,6 +24,12 @@ public class ExampleSubsystem extends SubsystemBase {
    * Puts default values to SmartDashboard
    */
   public void putToSmartDashboard() {
+    TalonFX[] motors = { leftMaster, leftFollower, rightMaster, rightFollower };
+    for (TalonFX motor : motors) {
+      String baseName = "Motor " + motor.getDeviceID() + " ";
+      SmartDashboard.putBoolean(baseName + "inverted", false);
+    }
+    
     SmartDashboard.putBoolean("Flush", false);
     SmartDashboard.putNumber("kP", 0);
     SmartDashboard.putNumber("kI", 0);
@@ -58,11 +64,14 @@ public class ExampleSubsystem extends SubsystemBase {
   public void flush() {
     TalonFX[] motors = { leftMaster, leftFollower, rightMaster, rightFollower };
     for (TalonFX motor : motors) {
+      String baseName = "Motor " + motor.getDeviceID() + " ";
+
       motor.config_kP(0, SmartDashboard.getNumber("kP", 0));
       motor.config_kI(0, SmartDashboard.getNumber("kI", 0));
       motor.config_kD(0, SmartDashboard.getNumber("kD", 0));
       motor.config_kF(0, SmartDashboard.getNumber("kF", 0));
       motor.set(ControlMode.Velocity, SmartDashboard.getNumber("Setpoint", 0));
+      motor.setInverted(SmartDashboard.getBoolean(baseName+"inverted", false));
 
     }
     SmartDashboard.putBoolean("Flush", false);
