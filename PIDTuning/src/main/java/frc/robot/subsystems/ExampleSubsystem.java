@@ -20,6 +20,8 @@ public class ExampleSubsystem extends SubsystemBase {
   public TalonFX rightMaster;
   public TalonFX rightFollower;
 
+
+
   /**
    * Puts default values to SmartDashboard
    */
@@ -49,14 +51,14 @@ public class ExampleSubsystem extends SubsystemBase {
     TalonFX[] motors = { leftMaster, rightMaster };
     for (TalonFX motor : motors) {
       motor.configFactoryDefault();
+      motor.setSelectedSensorPosition(0);
     }
 
     rightMaster.setInverted(true);
     rightFollower.setInverted(true);
 
-    if (SmartDashboard.getBoolean("published", false) == false) {
-      putToSmartDashboard();
-    }
+    putToSmartDashboard();
+
     flush();
 
   }
@@ -74,6 +76,7 @@ public class ExampleSubsystem extends SubsystemBase {
       motor.config_kD(0, SmartDashboard.getNumber("kD", 0));
       motor.config_kF(0, SmartDashboard.getNumber("kF", 0));
       motor.set(ControlMode.Velocity, SmartDashboard.getNumber("Setpoint", 0));
+      System.out.println("Updated "+motor.getDeviceID());
 
     }
     SmartDashboard.putBoolean("Flush", false);
@@ -88,21 +91,21 @@ public class ExampleSubsystem extends SubsystemBase {
       String baseName = "Motor " + motor.getDeviceID() + " ";
       SmartDashboard.putNumber(baseName + "target", motor.getClosedLoopTarget());
       SmartDashboard.putNumber(baseName + "velocity", motor.getSelectedSensorVelocity());
+      SmartDashboard.putNumber(baseName + "error", motor.getClosedLoopError());
 
     }
   }
 
   @Override
-  public void periodic() {
+  public void periodic() { 
     // This method will be called once per scheduler run
     if (SmartDashboard.getBoolean("Flush", false)) {
       flush();
     }
-    TalonFX[] motors = {leftMaster, leftFollower, rightMaster, rightFollower};
-    for (TalonFX motor : motors){
-      motor.set(ControlMode.PercentOutput, 0.5);
-      SmartDashboard.putNumber("Motor "+motor.getDeviceID() + "Sensor Velocity", motor.getSelectedSensorVelocity());
+    putMotorValuesToSmartDashboard();
+    TalonFX[] motors = { leftMaster, leftFollower, rightMaster, rightFollower};
+    for (TalonFX motor : motors) {
+      //motor.set(ControlMode.PercentOutput, 0.5);
     }
-
   }
 }
